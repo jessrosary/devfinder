@@ -2,44 +2,18 @@ import './App.css';
 // import Header from './Header';
 // import SearchBar from './SearchBar';
 // import Profile from './Profile';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-function Header(props) {
-  return (
-    <header>
-      <div id='logo'>devfinder</div>
-      <div id='switch'>
-        <input
-          type='checkbox'
-          id='darkmode'
-          name='darkmode'
-          onClick={props.toggle}
-        />
-      </div>
-    </header>
-  );
-}
-
-function SearchBar(props) {
-  return (
-    <div className='searchbar'>
-      <input
-        type='text'
-        name='search'
-        onChange={props.handleChange}
-        onKeyDown={props.handleKeyDown}
-        placeholder='Search GitHub username...'
-      />
-      <button onClick={props.handleSearch}>Search</button>
-    </div>
-  );
-}
-
-function Profile(props) {
+const Profile = (props) => {
   const user = props.user;
 
   return (
     <div className='profile'>
+      {!props.isUserFound && (
+        <div className='error'>
+          <h1>Error: User not Found</h1>
+        </div>
+      )}
       <ul>
         <li>{user.name}</li>
         <li>{user.login}</li>
@@ -48,45 +22,88 @@ function Profile(props) {
       </ul>
     </div>
   );
-}
+};
 
-const App = () => {
+export default function App() {
   const [searchValue, setSearchValue] = useState('');
   const [userData, setUserData] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [userCache, setUserCache] = useState({});
+  const [isUserFound, setisUserFound] = useState(true);
 
-  // TODO: add searchValue validation(s), e.g. do not search for empty value
-  // TODO: add error states for
-  // 1. error, e.g. API error or JSON parsing error
-  // 2. user not found
   const searchUser = () => {
+    setisUserFound(true);
+    setUserData('');
+
+    if (!searchValue) {
+      console.log('no value');
+      return;
+    }
+
+    if (!userCache[searchValue] == undefined) {
+      setUserData(searchValue);
+      return;
+    }
     fetch(`https://api.github.com/users/${searchValue}`)
-      .then((response) => response.json())
-      .then((data) => setUserData(data));
+      .then((response) => {
+        if (!response.ok) {
+          console.log('error loading');
+          return;
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (!data) {
+          setisUserFound(false);
+          return;
+        }
+        setUserData(data);
+        setUserCache((prevUserCache) => ({
+          ...prevUserCache,
+          [data.login]: { ...data, lastFetched: Date.now() },
+        }));
+      });
   };
+
+  useEffect(() => {
+    console.log(userCache);
+  }, [userCache]);
 
   const handleMode = () => {
     setDarkMode((prevState) => !prevState);
+  };
 
-    return (
-      <div className='App'>
-        <Header toggle={handleMode} />
-        <SearchBar
-          handleChange={(e) => setSearchValue(e.target.value)}
-          handleSearch={searchUser}
-          handleKeyDown={(e) => {
+  return (
+    <div className='App'>
+      <header>
+        <div id='logo'>devfinder</div>
+        <div id='switch'>
+          <input
+            type='checkbox'
+            id='darkmode'
+            name='darkmode'
+            onClick={handleMode}
+          />
+        </div>
+      </header>
+      <div className='searchbar'>
+        <input
+          type='text'
+          name='search'
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
               searchUser(searchValue);
             }
           }}
+          placeholder='Search GitHub username...'
         />
-        {userData && <Profile user={userData} />}
+        <button onClick={searchUser}>Search</button>
       </div>
-    );
-  };
-};
-
-export default App;
+      <Profile user={userData} isUserFound={isUserFound} />
+    </div>
+  );
+}
 
 // useEffect(() => {
 //   console.log(`fetching ${selectedUser} ...`);
