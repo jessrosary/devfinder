@@ -1,8 +1,12 @@
-import './App.css';
 import { useEffect, useState } from 'react';
+import * as dayjs from 'dayjs';
 
 const Profile = (props) => {
   const { user, error } = props;
+
+  if (!error && !user) {
+    return <></>;
+  }
 
   return (
     <div className='profile'>
@@ -12,15 +16,71 @@ const Profile = (props) => {
         </p>
       )}
       {user && (
-        <ul>
-          <li>{user.name}</li>
-          <li>{user.login}</li>
-          <li>{user.created_at}</li>
-          <li>{user.bio}</li>
-          <li>
-            <em>Last updated: ${user.lastFetched}</em>
-          </li>
-        </ul>
+        <>
+          <div className='left'>
+            <img src={user.avatar_url}></img>
+          </div>
+          <div className='right'>
+            <span className='name'>{user.name}</span>
+            <span className='joined'>
+              Joined&nbsp;
+              {dayjs(user.created_at).format('DD MMM YYYY')}
+            </span>
+            <br></br>
+            <span className='login'>@{user.login}</span>
+            <br></br>
+            <p>{user.bio || 'This profile has no bio'}</p>
+            <div className='stats'>
+              <div>
+                Repos<br></br>
+                <span className='stat'>{user.public_repos}</span>
+              </div>
+              <div>
+                Followers<br></br>
+                <span className='stat'>{user.followers}</span>
+              </div>
+              <div>
+                Following<br></br>
+                <span className='stat'>{user.following}</span>
+              </div>
+            </div>
+            <div className='socials'>
+              <div className={user.location ? null : 'not-available'}>
+                <img
+                  className='icon'
+                  src={`./src/assets/location-${props.theme}.svg`}
+                />
+                {user.location || 'Not available'}
+              </div>
+              <div className={user.twitter_username ? null : 'not-available'}>
+                <img
+                  className='icon'
+                  src={`./src/assets/twitter-${props.theme}.svg`}
+                />
+                {user.twitter_username || 'Not available'}
+              </div>
+              <div className={user.blog ? null : 'not-available'}>
+                <img
+                  className='icon'
+                  src={`./src/assets/link-${props.theme}.svg`}
+                />
+                {user.blog || 'Not available'}
+              </div>
+              <div className={user.company ? null : 'not-available'}>
+                <img
+                  className='icon'
+                  src={`./src/assets/building-${props.theme}.svg`}
+                />
+                {user.company || 'Not available'}
+              </div>
+            </div>
+            {/* <div className='refresh'>
+              Last updated:
+              {dayjs(user.lastFetched).format('hh:mm:ss on DD MMM YYYY')}
+              <button onClick={props.refreshUser(user)}>Refresh</button>
+            </div> */}
+          </div>
+        </>
       )}
     </div>
   );
@@ -31,7 +91,7 @@ export default function App() {
   const [userData, setUserData] = useState();
   const [userCache, setUserCache] = useState({});
   const [fetchError, setFetchError] = useState();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [theme, setTheme] = useState('light');
 
   const fetchUser = () => {
     setUserData();
@@ -57,10 +117,13 @@ export default function App() {
       )
       .then((data) => {
         if (data) {
-          setUserData(data);
+          const userData = { ...data, lastFetched: Date.now() };
+
+          setUserData(userData);
+
           setUserCache((prevUserCache) => ({
             ...prevUserCache,
-            [username]: { ...data, lastFetched: Date.now() },
+            [username]: userData,
           }));
         } else {
           setFetchError(`User '${searchValue}' not found`);
@@ -68,39 +131,62 @@ export default function App() {
       });
   };
 
+  const refreshUser = (user) => {
+    delete userCache.user;
+    fetchUser(user);
+  };
+
   useEffect(() => {
     console.log(userCache);
   }, [userCache]);
 
-  // TODO: implement dark mode
-  const handleMode = () => {
-    setIsDarkMode((prevState) => !prevState);
+  const handleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    document.getElementById('theme-stylesheet').href = `src/${newTheme}.css`;
+    document.getElementById('root').className = newTheme;
+    setTheme(newTheme);
   };
+
+  const switchMode =
+    theme === 'light' ? (
+      <span className='switch'>
+        Dark <img src='./src/assets/moon.svg' />
+      </span>
+    ) : (
+      <span className='switch'>
+        Light <img src='./src/assets/sun.svg' />
+      </span>
+    );
 
   return (
     <div className='App'>
       <header>
         <div id='logo'>devfinder</div>
         <div id='switch'>
-          <input
-            type='checkbox'
-            id='isDarkMode'
-            name='isDarkMode'
-            onClick={handleMode}
-          />
+          <div onClick={handleTheme}>{switchMode}</div>
         </div>
       </header>
       <div className='searchbar'>
+        <img
+          className='magnifying-glass'
+          src='src/assets/magnifying-glass.svg'
+        />
         <input
           type='text'
           name='search'
+          autoComplete='off'
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && fetchUser(searchValue)}
           placeholder='Search GitHub username ...'
         />
         <button onClick={fetchUser}>Search</button>
       </div>
-      <Profile user={userData} error={fetchError} />
+      <Profile
+        theme={theme}
+        user={userData}
+        error={fetchError}
+        refreshUser={refreshUser}
+      />
     </div>
   );
 }
