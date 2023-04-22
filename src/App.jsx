@@ -135,9 +135,9 @@ export default function App() {
     fetchUser(user);
   };
 
-  useEffect(() => {
-    console.log(userCache);
-  }, [userCache]);
+  // useEffect(() => {
+  //   console.log(userCache);
+  // }, [userCache]);
 
   const handleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -172,6 +172,7 @@ export default function App() {
         />
         <input
           type='text'
+          spellCheck='false'
           name='search'
           autoComplete='off'
           onChange={(e) => setSearchValue(e.target.value)}
