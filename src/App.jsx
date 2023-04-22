@@ -17,19 +17,23 @@ const Profile = (props) => {
       )}
       {user && (
         <>
-          <div className='left'>
-            <img src={user.avatar_url}></img>
-          </div>
-          <div className='right'>
-            <span className='name'>{user.name}</span>
-            <span className='joined'>
-              Joined&nbsp;
-              {dayjs(user.created_at).format('DD MMM YYYY')}
-            </span>
-            <br></br>
-            <span className='login'>@{user.login}</span>
-            <br></br>
-            <p>{user.bio || 'This profile has no bio'}</p>
+          <img src={user.avatar_url} className='avatar'></img>
+          <div className='stats-container'>
+            <div className='main'>
+              <span className={user.name ? 'name' : 'name not-available'}>
+                {user.name || 'No name'}
+              </span>
+              <br></br>
+              <span className='login'>@{user.login}</span>
+              <br></br>
+              <span className='joined'>
+                Joined&nbsp;
+                {dayjs(user.created_at).format('DD MMM YYYY')}
+              </span>
+            </div>
+            <p className={user.bio ? null : 'not-available'}>
+              {user.bio || 'This profile has no bio'}
+            </p>
             <div className='stats'>
               <div>
                 Repos<br></br>
@@ -74,11 +78,6 @@ const Profile = (props) => {
                 {user.company || 'Not available'}
               </div>
             </div>
-            {/* <div className='refresh'>
-              Last updated:
-              {dayjs(user.lastFetched).format('hh:mm:ss on DD MMM YYYY')}
-              <button onClick={props.refreshUser(user)}>Refresh</button>
-            </div> */}
           </div>
         </>
       )}

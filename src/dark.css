@@ -9,15 +9,15 @@ body {
 #root {
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
   height: 100vh;
 }
 
 .App {
   width: 100%;
-  max-width: 750px;
+  max-width: 700px;
+  margin: 30px;
 }
-
 
 #logo {
   font-size: 1.5em;
@@ -43,7 +43,6 @@ header {
   position: relative;
   top: 5px;
 }
-
 
 .searchbar {
   background-color: #323658;
@@ -92,23 +91,16 @@ header {
   margin-top: 15px;
   background-color: #323658;
   border-radius: 10px;
-  padding: 20px 30px 20px ;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  padding: 20px 30px 20px;
   filter: drop-shadow(#000 4px 4px 10px);
 }
 
-.left>img {
+.avatar{
   height: 125px;
   width: 125px;
   border-radius: 125px;
-  margin: 25px;
-}
-
-.right {
-  width: 100%;
-  padding: 15px;
+  float: left;
+  margin: 25px 35px 100px 15px;
 }
 
 .name {
@@ -122,9 +114,22 @@ header {
 }
 
 .joined {
-  position: relative;
-  float: right;
-  font-size: .8em;
+  position: absolute;
+  top: 55px;
+  right: 40px;
+  font-size: .9em;
+}
+
+.info-container {
+  padding: 30px 30px 0px 30px;
+}
+
+.stats-container {
+  margin-top: 5px;
+  max-width: 460px;
+  width: 100%;
+  margin-left: auto;
+  padding: 20px;
 }
 
 .stats {
@@ -132,10 +137,9 @@ header {
   align-items: center;
   justify-content: space-around;
   background-color: #222433;
-  width: 100%;
   border-radius: 10px;
-  margin: 25px 0;
-  padding: 15px 2px;
+  margin: 25px 25px 25px 0;
+  padding: 15px;
 }
 
 .stat {
@@ -144,18 +148,99 @@ header {
 }
 
 .socials {
-  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   font-size: .8em;
   gap: 10px;
+  width: 100%;
+  margin: 15px 0;
+  padding: 0 15px;
 }
 
 .icon {
-  display: inline;
   margin-right: 10px;
 }
 
 .not-available {
   opacity: 50%;
+}
+
+@media only screen and (max-width: 810px) {
+
+  .App {
+    padding: 50px;
+  }
+
+  .joined {
+    float: none;
+    position: inherit;
+  }
+  .avatar {
+    margin: 25px 35px 0px 15px;
+  }
+
+  .main {
+    margin-bottom: 45px;
+  }
+  
+  .stats-container {
+    margin-top: 35px;
+    max-width: none;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .socials {
+    gap: 5px;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+
+  .App {
+    min-width: 325px;
+  }
+
+  .profile {
+    padding: 18px;
+  }
+
+  .avatar{
+    height: 75px;
+    width: 75px;
+    border-radius: 75px;
+    float: left;
+    margin: 15px 25px 0px 5px;
+  }
+
+  .stats-container {
+    margin-top: 5px;
+    max-width: none;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .name {
+    font-size: 1.2em;
+  }
+
+  .joined {
+    float: none;
+    position: inherit;
+  }
+
+  .socials {
+    padding: 0;
+    margin: 0;
+    line-height: 2em;
+    display: inline;
+  }
+
+  .stats {
+    font-size: .8em;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+  }
 }
