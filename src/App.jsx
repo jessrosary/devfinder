@@ -80,7 +80,7 @@ export default function App() {
           autoComplete='off'
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && fetchUser(searchValue)}
-          placeholder='Search GitHub username ...'
+          placeholder='GitHub username'
         />
         <button onClick={fetchUser}>Search</button>
       </div>

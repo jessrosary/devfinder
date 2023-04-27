@@ -13,12 +13,12 @@ body {
       background-color: white;
       filter: drop-shadow(#d2d5d9 4px 4px 10px);
 
-      > input {
+      input {
         background-color: white;
         color: #333333;
       }
 
-      > button {
+      button {
         background-color: #4aa8ff;
         color: white;
       }
@@ -46,12 +46,12 @@ body {
       background-color: #323658;
       filter: drop-shadow(#000 4px 4px 10px);
 
-      > input {
+      input {
         background-color: #323658;
         color: white;
       }
 
-      > button {
+      button {
         background-color: #4aa8ff;
         color: white;
       }
@@ -103,7 +103,7 @@ header {
   font-size: 0.8em;
 }
 
-.switch > img {
+.switch img {
   width: 25px;
   height: 25px;
   position: relative;
@@ -117,12 +117,12 @@ header {
   justify-content: space-between;
   align-items: center;
 
-  > .magnifying-glass {
+  .magnifying-glass {
     padding: 10px;
     height: 20px;
   }
 
-  > input {
+  input {
     font-family: 'Space Mono', monospace;
     padding-left: 15px;
     font-size: 1.2em;
@@ -131,12 +131,16 @@ header {
     width: 100%;
     margin-right: 15px;
 
+    &::placeholder {
+      opacity: 0.6;
+    }
+
     &:focus {
       outline: none;
     }
   }
 
-  > button {
+  button {
     font-family: 'Space Mono', monospace;
     font-weight: 700;
     font-size: 1em;
@@ -249,6 +253,8 @@ header {
 @media only screen and (max-width: 600px) {
   .App {
     min-width: 325px;
+    padding: 20px;
+    margin: 0px;
   }
 
   .profile {
@@ -277,6 +283,10 @@ header {
   .joined {
     float: none;
     position: inherit;
+  }
+
+  .searchbar input {
+    font-size: 1.1em;
   }
 
   .socials {
