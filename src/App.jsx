@@ -1,5 +1,109 @@
-import { useEffect, useState } from 'react';
-import * as dayjs from 'dayjs';
+import { useState } from 'react';
+import dayjs from 'dayjs';
+
+export default function App() {
+  const [searchValue, setSearchValue] = useState('');
+  const [userData, setUserData] = useState();
+  const [userCache, setUserCache] = useState({});
+  const [fetchError, setFetchError] = useState();
+  const [theme, setTheme] = useState('light');
+
+  const fetchUser = () => {
+    setUserData();
+    setFetchError();
+
+    if (!searchValue) {
+      setFetchError('Empty username');
+      return;
+    }
+
+    const username = searchValue.toLowerCase();
+    const cachedUserData = userCache[username];
+
+    if (cachedUserData) {
+      console.log(`fetching ${username} from cache`);
+      setUserData(cachedUserData);
+      return;
+    }
+
+    fetch(`https://api.github.com/users/${searchValue}`)
+      .then((response) =>
+        response.ok ? response.json() : setFetchError(`API ${response.status}`)
+      )
+      .then((data) => {
+        if (data) {
+          const userData = { ...data, lastFetched: Date.now() };
+
+          setUserData(userData);
+
+          setUserCache((prevUserCache) => ({
+            ...prevUserCache,
+            [username]: userData,
+          }));
+        } else {
+          setFetchError(`User '${searchValue}' not found`);
+        }
+      });
+  };
+
+  // TODO: implement cache refresh
+  // const refreshUser = (user) => {
+  //   delete userCache.user;
+  //   fetchUser(user);
+  // };
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    document.body.className = newTheme;
+    setTheme(newTheme);
+  };
+
+  return (
+    <div className='App'>
+      <header>
+        <div id='logo'>devfinder</div>
+        <div id='switch'>
+          <div onClick={toggleTheme}>
+            <ToggleThemeButton theme={theme} />
+          </div>
+        </div>
+      </header>
+      <div className='searchbar'>
+        <img
+          className='magnifying-glass'
+          src='src/assets/magnifying-glass.svg'
+        />
+        <input
+          type='text'
+          spellCheck='false'
+          name='search'
+          autoComplete='off'
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && fetchUser(searchValue)}
+          placeholder='GitHub username'
+        />
+        <button onClick={fetchUser}>Search</button>
+      </div>
+      <Profile
+        theme={theme}
+        user={userData}
+        error={fetchError}
+        // refreshUser={refreshUser}
+      />
+    </div>
+  );
+}
+
+const ToggleThemeButton = (props) => {
+  const [text, image] =
+    props.theme === 'light' ? ['Dark', 'moon.svg'] : ['Light', 'sun.svg'];
+
+  return (
+    <span className='switch'>
+      {text} <img src={`./src/assets/${image}`} />
+    </span>
+  );
+};
 
 const Profile = (props) => {
   const { user, error } = props;
@@ -84,108 +188,3 @@ const Profile = (props) => {
     </div>
   );
 };
-
-export default function App() {
-  const [searchValue, setSearchValue] = useState('');
-  const [userData, setUserData] = useState();
-  const [userCache, setUserCache] = useState({});
-  const [fetchError, setFetchError] = useState();
-  const [theme, setTheme] = useState('light');
-
-  const fetchUser = () => {
-    setUserData();
-    setFetchError();
-
-    if (!searchValue) {
-      setFetchError('Empty username');
-      return;
-    }
-
-    const username = searchValue.toLowerCase();
-    const cachedUserData = userCache[username];
-
-    if (cachedUserData) {
-      console.log(`fetching ${username} from cache`);
-      setUserData(cachedUserData);
-      return;
-    }
-
-    fetch(`https://api.github.com/users/${searchValue}`)
-      .then((response) =>
-        response.ok ? response.json() : setFetchError(`API ${response.status}`)
-      )
-      .then((data) => {
-        if (data) {
-          const userData = { ...data, lastFetched: Date.now() };
-
-          setUserData(userData);
-
-          setUserCache((prevUserCache) => ({
-            ...prevUserCache,
-            [username]: userData,
-          }));
-        } else {
-          setFetchError(`User '${searchValue}' not found`);
-        }
-      });
-  };
-
-  const refreshUser = (user) => {
-    delete userCache.user;
-    fetchUser(user);
-  };
-
-  useEffect(() => {
-    console.log(userCache);
-  }, [userCache]);
-
-  const handleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    document.getElementById('theme-stylesheet').href = `src/${newTheme}.css`;
-    document.getElementById('root').className = newTheme;
-    setTheme(newTheme);
-  };
-
-  const switchMode =
-    theme === 'light' ? (
-      <span className='switch'>
-        Dark <img src='./src/assets/moon.svg' />
-      </span>
-    ) : (
-      <span className='switch'>
-        Light <img src='./src/assets/sun.svg' />
-      </span>
-    );
-
-  return (
-    <div className='App'>
-      <header>
-        <div id='logo'>devfinder</div>
-        <div id='switch'>
-          <div onClick={handleTheme}>{switchMode}</div>
-        </div>
-      </header>
-      <div className='searchbar'>
-        <img
-          className='magnifying-glass'
-          src='src/assets/magnifying-glass.svg'
-        />
-        <input
-          type='text'
-          name='search'
-          autoComplete='off'
-          onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && fetchUser(searchValue)}
-          placeholder='Search GitHub username ...'
-        />
-        <button onClick={fetchUser}>Search</button>
-      </div>
-      <Profile
-        theme={theme}
-        user={userData}
-        error={fetchError}
-        refreshUser={refreshUser}
-      />
-    </div>
-  );
-}

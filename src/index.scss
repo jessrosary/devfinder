@@ -1,15 +1,81 @@
 body {
-  color: white;
-  background-color: #222433;
+  margin: 0;
   font-family: 'Space Mono', monospace;
   line-height: 1.5;
   font-weight: 400;
+
+  &:not(.dark),
+  &.light {
+    color: #333333;
+    background-color: #ecedf5;
+
+    .searchbar {
+      background-color: white;
+      filter: drop-shadow(#d2d5d9 4px 4px 10px);
+
+      input {
+        background-color: white;
+        color: #333333;
+      }
+
+      button {
+        background-color: #4aa8ff;
+        color: white;
+      }
+    }
+
+    .profile {
+      background-color: #fff;
+      filter: drop-shadow(#d2d5d9 4px 4px 10px);
+    }
+
+    .login {
+      color: #4aa8ff;
+    }
+
+    .stats {
+      background-color: #ecedf5;
+    }
+  }
+
+  &.dark {
+    color: white;
+    background-color: #222433;
+
+    .searchbar {
+      background-color: #323658;
+      filter: drop-shadow(#000 4px 4px 10px);
+
+      input {
+        background-color: #323658;
+        color: white;
+      }
+
+      button {
+        background-color: #4aa8ff;
+        color: white;
+      }
+    }
+
+    .profile {
+      background-color: #323658;
+      filter: drop-shadow(#000 4px 4px 10px);
+    }
+
+    .login {
+      color: #4aa8ff;
+      font-weight: 700;
+    }
+
+    .stats {
+      background-color: #222433;
+    }
+  }
 }
 
 #root {
   display: flex;
   justify-content: center;
-  /* align-items: center; */
   height: 100vh;
 }
 
@@ -34,10 +100,10 @@ header {
   cursor: pointer;
   text-transform: uppercase;
   font-weight: 700;
-  font-size: .8em;
+  font-size: 0.8em;
 }
 
-.switch>img {
+.switch img {
   width: 25px;
   height: 25px;
   position: relative;
@@ -45,57 +111,53 @@ header {
 }
 
 .searchbar {
-  background-color: #323658;
   border-radius: 10px;
   padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  filter: drop-shadow(#000 4px 4px 10px);
-}
 
-.searchbar>.magnifying-glass{
-  padding: 10px;
-  height: 20px;
-}
+  .magnifying-glass {
+    padding: 10px;
+    height: 20px;
+  }
 
-.searchbar>input {
-  font-family: 'Space Mono', monospace;
-  padding-left: 15px;
-  background-color: #323658;
-  color:white;
-  font-size: 1.2em;
-  border: none;
-  height: 35px;
-  width: 100%;
-  margin-right: 15px;
-}
+  input {
+    font-family: 'Space Mono', monospace;
+    padding-left: 15px;
+    font-size: 1.2em;
+    border: none;
+    height: 35px;
+    width: 100%;
+    margin-right: 15px;
 
-.searchbar>input:focus {
-  outline: none;
-}
+    &::placeholder {
+      opacity: 0.6;
+    }
 
-.searchbar>button {
-  background-color: #4AA8FF;
-  font-family: 'Space Mono', monospace;
-  font-weight: 700;
-  font-size: 1em;
-  border: none;
-  color: white;
-  padding: 12px 15px;
-  border-radius: 8px;
-  cursor: pointer;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 1em;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 }
 
 .profile {
   margin-top: 15px;
-  background-color: #323658;
   border-radius: 10px;
   padding: 20px 30px 20px;
-  filter: drop-shadow(#000 4px 4px 10px);
 }
 
-.avatar{
+.avatar {
   height: 125px;
   width: 125px;
   border-radius: 125px;
@@ -108,16 +170,11 @@ header {
   font-weight: 700;
 }
 
-.login {
-  color: #4AA8FF;
-  font-weight: 700;
-}
-
 .joined {
   position: absolute;
   top: 55px;
   right: 40px;
-  font-size: .9em;
+  font-size: 0.9em;
 }
 
 .info-container {
@@ -136,7 +193,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background-color: #222433;
   border-radius: 10px;
   margin: 25px 25px 25px 0;
   padding: 15px;
@@ -150,7 +206,7 @@ header {
 .socials {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  font-size: .8em;
+  font-size: 0.8em;
   gap: 10px;
   width: 100%;
   margin: 15px 0;
@@ -166,7 +222,6 @@ header {
 }
 
 @media only screen and (max-width: 810px) {
-
   .App {
     padding: 50px;
   }
@@ -182,7 +237,7 @@ header {
   .main {
     margin-bottom: 45px;
   }
-  
+
   .stats-container {
     margin-top: 35px;
     max-width: none;
@@ -193,20 +248,20 @@ header {
   .socials {
     gap: 5px;
   }
-
 }
 
 @media only screen and (max-width: 600px) {
-
   .App {
     min-width: 325px;
+    padding: 20px;
+    margin: 0px;
   }
 
   .profile {
     padding: 18px;
   }
 
-  .avatar{
+  .avatar {
     height: 75px;
     width: 75px;
     border-radius: 75px;
@@ -230,6 +285,10 @@ header {
     position: inherit;
   }
 
+  .searchbar input {
+    font-size: 1.1em;
+  }
+
   .socials {
     padding: 0;
     margin: 0;
@@ -238,7 +297,7 @@ header {
   }
 
   .stats {
-    font-size: .8em;
+    font-size: 0.8em;
     align-items: center;
     justify-content: space-evenly;
     text-align: center;
